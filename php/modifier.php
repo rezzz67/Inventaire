@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['supprimer'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier un Ordinateur</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/style/styles.css">
     <script>
         function confirmDelete() {
             return confirm("Êtes-vous sûr de vouloir supprimer cet ordinateur ?");

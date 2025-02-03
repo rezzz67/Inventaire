@@ -33,7 +33,7 @@ $liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FET
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventaire des Ordinateurs</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/style/styles.css">
 </head>
 <body>
     <header>
