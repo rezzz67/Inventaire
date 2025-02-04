@@ -1,8 +1,9 @@
 <?php
+$servername = "mysql_db";
 $host = 'localhost';
 $dbname = 'inventory';
 $username = 'root';
-$password = '';
+$password = 'rootpassword';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
