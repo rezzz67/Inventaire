@@ -75,7 +75,7 @@ $liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FET
                             <td><?= htmlspecialchars($ordinateur['commentaire']) ?></td>
                             <td>
                                 <form method="post" action="modifier.php" style="display:inline;">
-                                    <input type="hidden" name="id" value="<?= $ordinateur['id'] ?>">
+                                    <input type="hidden" name="id" value="<?= $ordinateur['serialnumber'] ?>">
                                     <button type="submit">Modifier</button>
                                 </form>
                             </td>
