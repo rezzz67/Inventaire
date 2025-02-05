@@ -11,10 +11,10 @@ try {
     die("Erreur de connexion : " . $e->getMessage());
 }
 
-if (isset($_POST['id'])) {
-    $id = $_POST['id'];
-    $stmt = $pdo->prepare("SELECT * FROM ordinateurs WHERE id = :id");
-    $stmt->execute(['id' => $id]);
+if (isset($_POST['serialnumber'])) {
+    $serialnumber = $_POST['serialnumber'];
+    $stmt = $pdo->prepare("SELECT * FROM ordinateurs WHERE serialnumber = :serialnumber");
+    $stmt->execute(['serialnumber' => $serialnumber]);
     $ordinateur = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$ordinateur) {
