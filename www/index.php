@@ -1,9 +1,19 @@
 <?php
-$servername = "mysql_db";
-$host = 'localhost';
+// $servername = 'mysql_db';
+$host = 'mysql_db';
 $dbname = 'inventory';
 $username = 'root';
 $password = 'rootpassword';
+
+// require __DIR__ . 'C:\wamp64\www\Inventaire\vendor\autoload.php';
+
+// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+// $dotenv->load();
+
+// $servername = $_ENV['DB_HOST'];
+// $dbname = $_ENV['DB_DATABASE'];
+// $username = $_ENV['DB_USERNAME'];
+// $password = $_ENV['DB_PASSWORD'];
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
