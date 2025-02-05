@@ -1,96 +1,88 @@
 <?php
+$servername = 'mysql_db';
 $host = 'mysql_db';
 $dbname = 'inventory';
 $username = 'root';
 $password = 'rootpassword';
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
 
-if (isset($_POST['serialnumber'])) {
-    $serialnumber = $_POST['serialnumber'];
-    $stmt = $pdo->prepare("SELECT * FROM ordinateurs WHERE serialnumber = :serialnumber");
-    $stmt->execute(['serialnumber' => $serialnumber]);
-    $ordinateur = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ajouter'])) {
+    $serialnumber = $_POST['serialnumber'] ?? '';
+    $utilisateur = $_POST['utilisateur'] ?? '';
+    $marque = $_POST['marque'] ?? '';
+    $commentaire = $_POST['commentaire'] ?? ''; // Facultatif
 
-    if (!$ordinateur) {
-        die("Ordinateur non trouvé.");
+    if ($serialnumber && $utilisateur && $marque) {
+        try {
+            $sql = "INSERT INTO ordinateurs (serialnumber, utilisateur, marque, commentaire) VALUES (:serialnumber, :utilisateur, :marque, :commentaire)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'commentaire' => $commentaire]);
+            echo "Ordinateur ajouté avec succès.<br>";
+        } catch (PDOException $e) {
+            echo "Erreur lors de l'ajout de l'ordinateur : " . $e->getMessage() . "<br>";
+        }
+    } else {
+        echo "Tous les champs sont obligatoires, sauf le commentaire.<br>";
     }
-} else {
-    die("Numéro de série non fourni.");
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['modifier'])) {
-    $serialnumber = $_POST['serialnumber'];
-    $utilisateur = $_POST['utilisateur'];
-    $marque = $_POST['marque'];
-    $commentaire = $_POST['commentaire'];
-
-    $sql = "UPDATE ordinateurs SET serialnumber = :serialnumber, utilisateur = :utilisateur, marque = :marque, commentaire = :commentaire WHERE serialnumber = :serialnumber";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'commentaire' => $commentaire]);
-    
-    header("Location: index.php");
-    exit;
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['supprimer'])) {
-    $serialnumber = $_POST['serialnumber'];
-    $sql = "DELETE FROM ordinateurs WHERE serialnumber = :serialnumber";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(['serialnumber' => $serialnumber]);
-    
-    header("Location: index.php");
-    exit;
-}
+$liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier un Ordinateur</title>
-    <link rel="stylesheet" href="/styles.css">
-    <script>
-        function confirmDelete() {
-            return confirm("Êtes-vous sûr de vouloir supprimer cet ordinateur ?");
-        }
-    </script>
+    <title>Inventaire</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Modifier un PC portable</h1>
-    </header>
-    <main>
-        <form method="post">
-            <input type="hidden" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>">
-  
-            <label for="serialnumber">Numéro de série :</label>
-            <input type="text" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>" required>
-            
-            <label for="utilisateur">Utilisateur de l'ordinateur : </label>
-            <input type="date" name="utilisateur" value="<?= htmlspecialchars($ordinateur['utilisateur']) ?>" required>
-            
-            <label for="marque">Marque de l'ordinateur:</label>
-            <input type="text" name="marque" value="<?= htmlspecialchars($ordinateur['marque']) ?>" required>            
-          
-            <label for="commentaire">Commentaire :</label>
-            <textarea name="commentaire"><?= htmlspecialchars($ordinateur['commentaire']) ?></textarea>
+    <h1>Ajouter un ordinateur</h1>
+    <form method="POST">
+        <label for="serialnumber">Numéro de série :</label>
+        <input type="text" id="serialnumber" name="serialnumber" required><br>
+        <label for="utilisateur">Utilisateur :</label>
+        <input type="text" id="utilisateur" name="utilisateur" required><br>
+        <label for="marque">Marque :</label>
+        <input type="text" id="marque" name="marque" required><br>
+        <label for="commentaire">Commentaire :</label>
+        <textarea id="commentaire" name="commentaire"></textarea><br>
+        <button type="submit" name="ajouter">Ajouter</button>
+    </form>
 
-            <button type="submit" name="modifier">Modifier</button>
-        </form>
-        
-        <form method="post" style="margin-top: 20px;" onsubmit="return confirmDelete();">
-            <input type="hidden" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>">
-            <button type="submit" name="supprimer" class="btn-supprimer">Supprimer</button>
-        </form>
-        
-        <a href="index.php" class="btn-retour">Retour</a>
-    </main>
+    <h1>Liste des ordinateurs</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Numéro de série</th>
+                <th>Utilisateur</th>
+                <th>Marque du PC</th>
+                <th>Commentaire</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($liste_ordinateurs as $ordinateur) : ?>
+                <tr>
+                    <td><?= htmlspecialchars($ordinateur['serialnumber']) ?></td>
+                    <td><?= htmlspecialchars($ordinateur['utilisateur']) ?></td>
+                    <td><?= htmlspecialchars($ordinateur['marque']) ?></td>
+                    <td><?= htmlspecialchars($ordinateur['commentaire']) ?></td>
+                    <td>
+                        <form method="post" action="modifier.php" style="display:inline;">
+                            <input type="hidden" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>">
+                            <button type="submit">Modifier</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </body>
 </html>
