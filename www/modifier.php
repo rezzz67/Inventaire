@@ -21,7 +21,7 @@ if (isset($_POST['serialnumber'])) {
         die("Ordinateur non trouvé.");
     }
 } else {
-    die("ID non fourni.");
+    die("Numéro de série non fourni.");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['modifier'])) {
@@ -29,15 +29,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['modifier'])) {
     $utilisateur = $_POST['utilisateur'];
     $marque = $_POST['marque'];
     $commentaire = $_POST['commentaire'];
+
     $sql = "UPDATE ordinateurs SET serialnumber = :serialnumber, utilisateur = :utilisateur, marque = :marque, commentaire = :commentaire WHERE serialnumber = :serialnumber";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'commentaire' => $commentaire ,'serialnumber' => $serialnumber]);
+    $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'commentaire' => $commentaire]);
     
     header("Location: index.php");
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['supprimer'])) {
+    $serialnumber = $_POST['serialnumber'];
     $sql = "DELETE FROM ordinateurs WHERE serialnumber = :serialnumber";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['serialnumber' => $serialnumber]);
@@ -66,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['supprimer'])) {
     </header>
     <main>
         <form method="post">
-            <input type="hidden" name="id" value="<?= htmlspecialchars($ordinateur['id']) ?>">
+            <input type="hidden" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>">
   
             <label for="serialnumber">Numéro de série :</label>
             <input type="text" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>" required>
@@ -76,15 +78,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['supprimer'])) {
             
             <label for="marque">Marque de l'ordinateur:</label>
             <input type="text" name="marque" value="<?= htmlspecialchars($ordinateur['marque']) ?>" required>            
-            
-            <label for="serialnumber">Numéro de serie :</label>
-            <input type="text" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>" required>
-            
+          
+            <label for="commentaire">Commentaire :</label>
+            <textarea name="commentaire"><?= htmlspecialchars($ordinateur['commentaire']) ?></textarea>
+
             <button type="submit" name="modifier">Modifier</button>
         </form>
         
         <form method="post" style="margin-top: 20px;" onsubmit="return confirmDelete();">
-            <input type="hidden" name="id" value="<?= htmlspecialchars($ordinateur['id']) ?>">
+            <input type="hidden" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>">
             <button type="submit" name="supprimer" class="btn-supprimer">Supprimer</button>
         </form>
         
