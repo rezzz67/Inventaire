@@ -29,10 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['modifier'])) {
     $utilisateur = $_POST['utilisateur'];
     $marque = $_POST['marque'];
     $commentaire = $_POST['commentaire'];
+    $garantie = $_POST['garantie'];
 
-    $sql = "UPDATE ordinateurs SET serialnumber = :serialnumber, utilisateur = :utilisateur, marque = :marque, commentaire = :commentaire WHERE serialnumber = :serialnumber";
+    $sql = "UPDATE ordinateurs SET serialnumber = :serialnumber, utilisateur = :utilisateur, marque = :marque, commentaire = :commentaire, garantie =:garantie  WHERE serialnumber = :serialnumber";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'commentaire' => $commentaire]);
+    $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'garantie' => $garantie , 'commentaire' => $commentaire]);
     
     header("Location: index.php");
     exit;
@@ -77,7 +78,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['supprimer'])) {
             <input type="text" name="utilisateur" value="<?= htmlspecialchars($ordinateur['utilisateur']) ?>" required>
             
             <label for="marque">Marque de l'ordinateur:</label>
-            <input type="text" name="marque" value="<?= htmlspecialchars($ordinateur['marque']) ?>" required>            
+            <input type="text" name="marque" value="<?= htmlspecialchars($ordinateur['marque']) ?>" required>
+
+            <label for="garantie">Date de fin garantie:</label>
+            <input type="date" name="garantie" value="<?= htmlspecialchars($ordinateur['garantie']) ?>" required>              
           
             <label for="commentaire">Commentaire :</label>
             <textarea name="commentaire"><?= htmlspecialchars($ordinateur['commentaire']) ?></textarea>

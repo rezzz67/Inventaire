@@ -16,13 +16,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ajouter'])) {
     $serialnumber = $_POST['serialnumber'] ?? '';
     $utilisateur = $_POST['utilisateur'] ?? '';
     $marque = $_POST['marque'] ?? '';
+    $garantie = $_POST['garantie'] ?? '';
     $commentaire = $_POST['commentaire'] ?? ''; // Facultatif
 
     if ($serialnumber && $utilisateur && $marque) {
         try {
-            $sql = "INSERT INTO ordinateurs (serialnumber, utilisateur, marque, commentaire) VALUES (:serialnumber, :utilisateur, :marque, :commentaire)";
+            $sql = "INSERT INTO ordinateurs (serialnumber, utilisateur, marque, garantie, commentaire) VALUES (:serialnumber, :utilisateur, :marque,:garantie, :commentaire)";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'commentaire' => $commentaire]);
+            $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'garantie' => $garantie, 'commentaire' => $commentaire]);
             echo "Ordinateur ajouté avec succès.<br>";
         } catch (PDOException $e) {
             echo "Erreur lors de l'ajout de l'ordinateur : " . $e->getMessage() . "<br>";
@@ -51,6 +52,8 @@ $liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FET
         <input type="text" id="utilisateur" name="utilisateur" required><br>
         <label for="marque">Marque :</label>
         <input type="text" id="marque" name="marque" required><br>
+        <label for="garantie">Date de fin de Garantie :</label>
+        <input type="date" id="garantie" name="garantie" required><br>
         <label for="commentaire">Commentaire :</label>
         <textarea id="commentaire" name="commentaire"></textarea><br>
         <button type="submit" name="ajouter">Ajouter</button>
@@ -63,6 +66,7 @@ $liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FET
                 <th>Numéro de série</th>
                 <th>Utilisateur</th>
                 <th>Marque du PC</th>
+                <th>Date de fin de garantie</th>
                 <th>Commentaire</th>
                 <th>Action</th>
             </tr>
@@ -73,6 +77,7 @@ $liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FET
                     <td><?= htmlspecialchars($ordinateur['serialnumber']) ?></td>
                     <td><?= htmlspecialchars($ordinateur['utilisateur']) ?></td>
                     <td><?= htmlspecialchars($ordinateur['marque']) ?></td>
+                    <td><?= htmlspecialchars($ordinateur['garantie']) ?></td>
                     <td><?= htmlspecialchars($ordinateur['commentaire']) ?></td>
                     <td>
                         <form method="post" action="modifier.php" style="display:inline;">
