@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['supprimer'])) {
             <input type="text" name="serialnumber" value="<?= htmlspecialchars($ordinateur['serialnumber']) ?>" required>
             
             <label for="utilisateur">Utilisateur de l'ordinateur : </label>
-            <input type="date" name="utilisateur" value="<?= htmlspecialchars($ordinateur['utilisateur']) ?>" required>
+            <input type="text" name="utilisateur" value="<?= htmlspecialchars($ordinateur['utilisateur']) ?>" required>
             
             <label for="marque">Marque de l'ordinateur:</label>
             <input type="text" name="marque" value="<?= htmlspecialchars($ordinateur['marque']) ?>" required>            
