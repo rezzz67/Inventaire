@@ -48,11 +48,11 @@ $liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FET
     <form method="POST">
         <label for="serialnumber">Numéro de série :</label>
         <input type="text" id="serialnumber" name="serialnumber" required><br>
-        <label for="utilisateur">Utilisateur de l'ordinateur :</label>
+        <label for="utilisateur">Nom de l'utilisteur :</label>
         <input type="text" id="utilisateur" name="utilisateur" required><br>
         <label for="marque">Marque :</label>
         <input type="text" id="marque" name="marque" required><br>
-        <label for="garantie">Date de fin de Garantie :</label>
+        <label for="garantie">Date de fin de garantie :</label>
         <input type="date" id="garantie" name="garantie" required><br>
         <label for="commentaire">Commentaire :</label>
         <textarea id="commentaire" name="commentaire"></textarea><br>
