@@ -1,22 +1,12 @@
 <?php
-// $servername = 'mysql_db';
+$servername = 'mysql_db';
 $host = 'mysql_db';
 $dbname = 'inventory';
 $username = 'root';
 $password = 'rootpassword';
 
-// require __DIR__ . 'C:\wamp64\www\Inventaire\vendor\autoload.php';
-
-// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-// $dotenv->load();
-
-// $servername = $_ENV['DB_HOST'];
-// $dbname = $_ENV['DB_DATABASE'];
-// $username = $_ENV['DB_USERNAME'];
-// $password = $_ENV['DB_PASSWORD'];
-
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
@@ -28,10 +18,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ajouter'])) {
     $marque = $_POST['marque'] ?? '';
     $commentaire  = $_POST['commentaire'] ?? '';
 
-    if ($utilisateur && $reservation && $os && $serialnumber) {
-        $sql = "INSERT INTO ordinateurs (serialnumber, utilisateur,marque,commentaire ) VALUES ( :serialnumber, :utilisateur, :marque, :commentaire)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'commentaire' => $commentaire]);
+    if ($serialnumber && $utilisateur && $marque) {
+        try {
+            $sql = "INSERT INTO ordinateurs (serialnumber, utilisateur, marque, commentaire) VALUES (:serialnumber, :utilisateur, :marque, :commentaire)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['serialnumber' => $serialnumber, 'utilisateur' => $utilisateur, 'marque' => $marque, 'commentaire' => $commentaire]);
+        } catch (PDOException $e) {
+            echo "Erreur lors de l'ajout de l'ordinateur : " . $e->getMessage() . "<br>";
+        }
+    } else {
+        echo "Tous les champs sont obligatoires.<br>";
     }
 }
 
@@ -42,38 +38,25 @@ $liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FET
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventaire des Ordinateurs</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title>Inventaire</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Inventaire des PC portables</h1>
-    </header>
-    <main>
-        <section id="ajout-ordinateur">
-            <h2>Ajouter un ordinateur</h2>
-            <form method="post">
-                            
-                <label for="serialnumber"> Numéro de série :</label>
-                <input type="text" name="serialnumber" required>
-            
-                <label for="utilisateur">Utilisateur :</label>
-                <input type="text" name="utilisateur" required>
-                
-                <label for="marque">Marque du PC :</label>
-                <input type="text" name="marque" required>
-                
-                <label for="commentaire">Commentaire</label>
-                <textarea cols=10 rows=5 name="commentaire"></textarea>
-                
-                <button type="submit" name="ajouter">Ajouter</button>
-            </form>
-        </section>
-        
-        <section id="liste-ordinateurs">
-            <h2>Liste des ordinateurs</h2>
-            <table>
+    <h1>Ajouter un ordinateur</h1>
+    <form method="POST">
+        <label for="serialnumber">Numéro de série :</label>
+        <input type="text" id="serialnumber" name="serialnumber" required><br>
+        <label for="utilisateur">Utilisateur :</label>
+        <input type="text" id="utilisateur" name="utilisateur" required><br>
+        <label for="marque">Marque :</label>
+        <input type="text" id="marque" name="marque" required><br>
+        <label for="commentaire">Commentaire :</label>
+        <textarea id="commentaire" name="commentaire"></textarea><br>
+        <button type="submit" name="ajouter">Ajouter</button>
+    </form>
+
+    <h1>Liste des ordinateurs</h1>
+    <table>
                 <thead>
                     <tr>
                         <th>Numéro de série</th>
@@ -100,7 +83,5 @@ $liste_ordinateurs = $pdo->query("SELECT * FROM ordinateurs")->fetchAll(PDO::FET
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </section>
-    </main>
 </body>
 </html>
